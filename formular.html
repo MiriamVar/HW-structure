@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+    caption {padding: 5px}
+    table {padding-top: 13px}
+    td {padding: 5px}
+    </style>
+    <script>
+      function checkForm(){
+        //checkovanie mena
+        let user=document.getElementsByName('name')[0].value;
+        if (user.length<2) {
+          document.getElementById('checkName').innerHTML="* Name is mandatory value.";
+          
+        }
+        else{
+          document.getElementById('checkName').innerHTML="";
+          console.log(user);
+        }
+
+        //checkovanie hesla
+        let pass=document.getElementById('password').value.split("");
+        console.log(pass);
+        let len=pass.length;
+        console.log(len);
+
+        let cis=parseInt(0);
+        let mp=parseInt(0);
+        let vp=parseInt(0);
+        let znak=parseInt(0);
+
+        if (len<7) {
+          document.getElementById('checkPass').innerHTML="* Password is too short";
+        } 
+        else{
+            for (let i =0; i<len; i++) {
+        //console.log(pass[i]);
+              if (pass[i]>='a' && pass[i]<='z') {
+                 mp++;
+              }
+              if(pass[i]>='A' && pass[i]<='Z'){
+               vp++;
+              }
+              if(pass[i]>='0' && pass[i]<='9'){
+                cis++;
+              }
+              if(pass[i]>='!' && pass[i]<='/' || pass[i]>=':' && pass[i]<='@'){
+                znak++;
+              } 
+            }
+            if(mp>0 && vp>0 && cis>0 && znak>0){
+               document.getElementById('checkPass').innerHTML="";
+            } else{
+                document.getElementById('checkPass').innerHTML="* Password is not too strong.";
+             }
+       }
+
+       //checkovanie mailu
+       let mail=document.getElementById('email').value;
+       if(/[@]/.test(mail) === true){
+        //obsahuje 
+       }
+       else{
+        document.getElementById('checkEmail').innerHTML="* Email must have at least @";
+       }
+      }
+      //ak bude zakrtnute policko OTHERS .. otvori sa policko na zapisovanie
+      function checkOthers(){
+        let oth=document.getElementById('special').checked;
+        if(oth === true){
+          document.getElementById('len').style.display="inline-block";
+        }
+        else{
+          document.getElementById('len').style.display="none";
+        }
+
+
+      }
+    </script>
+  </head>
+  <body>
+    <form>
+    <table align="center" style="font-family: Arial">
+      <thead >
+        <caption style="background-color:lightgrey; font-size:150%;" >Registration</caption>
+    </thead>
+      <tbody>
+        <tr>
+          <td>Name:</td>
+          <td><input type="text" name="name" placeholder="Enter your name" ></td>
+          <td> <div id="checkName"> </div></td>
+        </tr>
+        <tr>
+          <td>Password: </td>
+          <td><input type="password" id="password"></td>
+          <td><div id="checkPass"></div></td>
+        </tr>
+        <tr>
+          <td>Email:</td>
+          <td>  <input type="email" id="email"></td>
+          <td><div id="checkEmail"></div></td>
+        </tr>
+        <tr>
+          <td>Date of birth:</td>
+          <td><input type="date" name="dateofbirth" placeholder="YYYY-MM-DD"></td>
+        </tr>
+        <tr>
+          <td>Grade:</td>
+          <td><input type="number" min="1"> </td>
+        </tr>
+        <tr>
+          <td>Gender:</td>
+          <td><input type="radio" name="gender"value="1">Male<br>
+          <input type="radio" name="gender" value="2">Female</td>
+        </tr>
+        <tr>
+          <td>Marital status:</td>
+          <td><input type="radio" name="status" value="1">Single<br>
+              <input type="radio" name="status" value="2">Married<br>
+              <input type="radio" name="status" value="3">Divorced<br>
+              <input type="radio" name="status" value="4">Widower</td>
+        </tr>
+        <tr>
+          <td>Language:</td>
+          <td><input type="checkbox" name="language" value="1">English<br>
+              <input type="checkbox" name="language" value="1">German<br>
+              <input type="checkbox" name="language" value="1">Russian<br>
+              <input type="checkbox" id="special" name="language" value="1" onclick="checkOthers()">Others<input style="display: none;" type="text" id="len"></td>
+        </tr>
+        <tr>
+          <td>Nationality</td>
+          <td><select name="nationality">
+            <option value="SVK">Slovak</option>
+            <option value="UK">Ukrainian</option>
+            <option value="HU">Hungarian</option>
+            <option value="PL">Polish</option>
+            <option value="OT">Others</option>
+          </select> </td>
+        </tr>
+        <tr>
+          <td>About:</td>
+          <td><textarea name="aboutme" rows="5" placeholder="Text"></textarea></td>
+        </tr>
+        <tr>
+          <td>Your CV:</td>
+          <td> <input type="file" name="myFile"></td>
+        </tr>
+				<tr>
+					<td>Are you happy?</td>
+					<td>No<input type="range" name="points">Yes</td>
+				</tr>
+        <tr align="center">
+          <td><input type="reset" name="reset" value="Reset"></td>
+          <td><input type="button" name="submiiit" value="Submit" onclick="checkForm()"> </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </form>
+
+  </body>
+</html>
