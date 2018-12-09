@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<head>
+	<title>Registration</title>
+	<style type="text/css">
+		body {
+			background-color: #42f4ce;
+			font-family: Calibri; 
+		}
+		#mainDiv,#tabulka{
+			width: 585px;
+			margin: auto;
+			padding-top: 20px;
+		}
+		td{
+			padding-left: 5px;
+		}
+		#tlacitko{
+			width: 60px;
+		}
+		input[type="text"],[type="number"]{
+			width: 130px;
+		}
+		#tabulka table {
+			border: 2px solid #26443f;
+			width: 600px;
+		}
+		h1{
+			text-align: center;
+			color: #10473b;
+		}
+		.button {
+			margin-top: 10px;
+			margin-left: 150px;
+			border-radius: 20px;
+		}
+		.muz {
+        color: #000066;
+     	}
+        .zena {
+        color: #800000;
+        }
+        #tabulka table tbody{
+        	text-align: center;
+        }
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	
+</head>
+<body>
+	<h1>Dynamický renderovaný obsah tabuľky</h1>
+	<div id="mainDiv">
+		<table>
+			<tr align="center">
+				<td><label>Name: </label></td>
+				<td><label>Surname: </label></td>
+				<td><label>Age: </label></td>
+				<td><label>Gender: </label></td>
+				<td rowspan="2"> <button id="tlacitko" onclick="send()" disabled>ADD</button></td>
+			</tr>
+			<tr>
+				<td><input type="text" id="meno" onchange="check()"></td>
+				<td><input type="text" id="priezvisko" onchange="check()"></td>
+				<td><input type="number" id="vek" onchange="check()"></td>
+				<td><input type="radio" id="male" name="pohlavie" value="M" onchange="check()">Male <br>
+					<input type="radio" id="female" name="pohlavie" value="F" onchange="check()">Female <br>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div id="tabulka">
+		<table class="result" id="resultTab">
+			<thead>
+			<tr>
+				<th>Id</th>
+				<th onclick="sortByFname()">First Name</th>
+				<th onclick="sortByLname()">Surname</th>
+				<th onclick="sortByAge()">Age</th>
+				<th>Gender</th>
+				<th>Delete</th>
+			</tr>
+			</thead>
+			<tbody id="autoContent"></tbody>
+		</table>
+		<button class="button" id="SaveBtn">Save Data</button>
+		<button class="button" id="LoadBtn">Load Data</button>
+	</div>
+
+<script type="text/javascript">
+		let count =0;
+		let persons = [];
+
+
+
+		//povolenie tlacitka
+		function check(){
+			if (checkText("meno") && checkText("priezvisko") && checkAge("vek") && checkGender()) { 
+				document.getElementById("tlacitko").disabled = false;
+			} else {
+				document.getElementById("tlacitko").disabled = true;
+			}
+
+		}
+
+		//osetrenie textu
+		function checkText(nazov){
+			if(document.getElementById(nazov).value.length>1){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+
+		//osetrenie pohlavia
+		function checkGender(){
+			if (document.getElementById("male").checked == true || document.getElementById("female").checked == true) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		//osetrenie veku
+		function checkAge(){
+			if (document.getElementById("vek").value>0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		function send() {
+			count++;
+			let fn=document.getElementById('meno').value;
+			let ln=document.getElementById('priezvisko').value;
+			let v=document.getElementById('vek').value;
+			let p;
+			if(document.getElementsByName('pohlavie')[0].checked)
+				 p='M';
+			if(document.getElementsByName('pohlavie')[1].checked)
+				p='F';
+			console.log(fn,ln,v,p);
+
+			let person = {
+				id:count,
+				fname: fn,
+				lname: ln,
+				age: v,
+				gender: p
+			};
+
+			persons.push(person);
+
+			renderTable(person);
+			}
+			const deletePerson=(id)=>{
+				console.log(id);
+				let index=persons.findIndex(x => x.id===id);
+				console.log(index);
+				persons.splice(index,1);
+				console.log(persons);
+				$('#autoContent').empty();
+				persons.map(x=>{
+					renderTable(x);
+					console.log(x);
+				});
+				
+			}
+
+			const renderTable = (person) =>{
+			let col0=$('<td>').text(person.id);
+			let col1=$('<td>').text(person.fname);
+			let col2=$('<td>').text(person.lname);
+			let col3=$('<td>').text(person.age);
+			let col4=$('<td>');
+			if(person.gender=='M'){
+				col4.text('Male');
+			}
+			else if(person.gender=='F'){
+				col4.text('Female');
+			}	
+			else if(person.gender=='')
+				col4.text('Undefined');
+			let col5=$('<td>');
+
+			let text='deletePerson('+person.id+')';
+			let image=$('<img>').attr('src','trash.png').attr('onclick', text).attr('onmouseover','changeImg(this)');
+			col5.append(image);
+
+
+			let row=$('<tr>');
+			row.append(col0);
+			row.append(col1);
+			row.append(col2);
+			row.append(col3);
+			row.append(col4);
+			row.append(col5);
+
+			if(person.gender=='M'){
+				row.attr('class', 'muz');
+			}
+			else if(person.gender=='F'){
+				row.attr('class', 'zena');
+			}	
+
+			$('#resultTab').append(row);
+			
+
+			$('#meno').val('');
+			$('#priezvisko').val('');
+			$('#vek').val('');
+
+			if(document.getElementsByName('pohlavie')[0].checked)
+				 document.getElementsByName("pohlavie")[0].checked = false;
+			if(document.getElementsByName('pohlavie')[1].checked)
+				document.getElementsByName("pohlavie")[1].checked = false;
+		
+		}
+		$('#SaveBtn').click(()=>{
+				if (typeof(Storage) !=="Undefined") {
+					let text=JSON.stringify(persons);
+					localStorage.setItem("persons",text);
+					localStorage.setItem("counter",count);
+				}
+		});
+		$('#LoadBtn').click(()=>{
+				if (typeof(Storage) !=="Undefined") {
+					let text=localStorage.getItem("persons");
+					count=localStorage.getItem("counter");
+					persons=JSON.parse(text);
+					$('#autoContent').empty();
+					console.log(persons[0].fname);
+					persons.map(x=>{
+						renderTable(x);
+					});
+				}
+		});
+
+		function changeImg(){
+			 $( "img" ).hover(function() {
+      			$( this ).attr('src', 'X.png');
+    			}, function() {
+      				$( this ).attr('src', 'trash.png');
+    				});
+		}
+
+		function sortByAge(){
+			persons.sort((a,b)=>{
+				let c1=parseInt(a.age);
+				let c2=parseInt(b.age);
+				if (c1< c2) {return -1;}
+				if (c1> c2) {return 1;}
+				return 0;
+			});
+			$('#autoContent').empty();
+				persons.map(x=>{
+				renderTable(x);
+			});
+		}
+
+		function sortByFname(){
+			persons.sort((a,b)=>{
+				let c1=a.fname;
+				let c2=b.fname;
+				let d1=a.lname;
+				let d2=b.lname;
+				if(c1<c2){return -1;}
+				if(c1>c2){return 1;}
+				if(d1<d2){return -1;}
+				if(d1>d2){return 1;}
+				return 0;
+			});
+			$('#autoContent').empty();
+				persons.map(x=>{
+				renderTable(x);
+			});
+		}
+
+		function sortByLname(){
+			persons.sort((a,b)=>{
+				let c1=a.lname;
+				let c2=b.lname;
+				let d1=a.fname;
+				let d2=b.fname;
+				if(c1<c2){return -1;}
+				if(c1>c2){return 1;}
+				if(d1<d2){return -1;}
+				if(d1>d2){return 1;}
+				return 0;
+			});
+			$('#autoContent').empty();
+				persons.map(x=>{
+				renderTable(x);
+			});
+		}
+	</script>
+</body>
+</html>

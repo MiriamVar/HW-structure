@@ -15,6 +15,7 @@ typedef struct student{
 }
 student;
 
+//(\b[a-z]+[ ]){2}[MF][ ]([1-9]|[1-2][0-9]|3[0-1])[ ]([1-9]|1[0-2])[ ](1[0-9]{3}|2(00[0-9]|01[0-8]))
 
 int main(){
 	FILE*f;
@@ -49,7 +50,7 @@ int main(){
 	for(k=0;k<i;k++){
 		age=2018-(students[k].dob.y);
 		if(age<18){
-			printf("%s %s\n", students[k].fname, students[k].lname);
+			printf("%s %s %d\n", students[k].fname, students[k].lname,students[k].dob.y);
 		}
 	}
 	
